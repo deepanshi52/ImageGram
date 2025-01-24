@@ -25,7 +25,10 @@ const userSchema = new mongoose.Schema({
         minLength: 5,
       }
     });
-    
+
 const user = mongoose.model("User", schema);
 
 export default user;
+
+//implement user schema
+//implement post schema
