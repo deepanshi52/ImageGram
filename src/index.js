@@ -1,13 +1,23 @@
 import express from 'express';
 import connectDB from './config/dbConfig.js';
-import { createPost } from './Controllers/postControllers.js';
-import { s3uplaoder } from './config/multerConfig.js';
+import apiRouter from './routers/apiRouter.js'
+//import postRouter from './routers/post.js'
+//import userRouter from './routers/user.js'
+
 
 
 const PORT = 3002; // port number
 const app = express(); // create express app server instance
 
 app.use(express.json());
+app.use(express.text());
+app.use(express.urlencoded());
+
+app.use('/api', apiRouter);  ////if the URL has /api , then request is forwarded to the apiRouter
+
+//app.use('/posts', postRouter);  //if the URL has /posts , then use the postRouter to handle the request
+
+//app.use('/api/v1/users', userRouter); //if the url starts wuth /users , then use the userrouter to handle the request
 
 app.get('/', (req, res) => {
     return res.send('Home');
@@ -18,7 +28,7 @@ app.get('/ping/:name', (req, res) => {
     console.log(req.body);
     
     // const name = req.params.name
-    return res.json({message: 'pong' + ' ' + name });
+    return res.json({message: 'pong' + ' ' + name  });
 });
 
 app.get('/hello', (req, res) => {
@@ -44,7 +54,7 @@ function m3(req, res, next){
     next();   
 }
 
-app.post('/posts', s3uplaoder.single('image') , createPost );
+//app.post('/posts', s3uplaoder.single('image') , createPost );
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

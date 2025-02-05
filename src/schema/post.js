@@ -11,10 +11,10 @@ const postSchema = new mongoose.Schema({
         required: true,
     },
     user: {
-        user: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }
-});
+}, {timestamps: true });
 
 const post = mongoose.model("Post", postSchema); //post a collection
 

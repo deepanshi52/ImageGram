@@ -1,18 +1,22 @@
 import multer from "multer";
-import multerS3 from "multer-s3";
-import { s3 } from "./awsConfig.js";
-import {AWS_BUCKET_NAME} from "./serverConfig.js";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { cloudinary } from "./cloudinaryConfig.js";
 
-export const s3uplaoder = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: AWS_BUCKET_NAME,
-        acl: "public-read",
-        key: function(req, file, cb){
-            console.log(file);
-            
-             const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() + 1e9);  //to make sure that key is unique
-             cb(null, file.fieldname + "-", uniqueSuffix + "." + file.mimetype.split("/")[1]);
-        }
-    })
-}); //uploader is a middleware 
+// ✅ Configure Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "uploads",
+    format: async (req, file) => "png",
+    public_id: (req, file) => file.originalname.split(".")[0],
+  },
+});
+
+// ✅ Create Multer instance
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+});
+
+// ✅ Export correctly
+export { upload };
