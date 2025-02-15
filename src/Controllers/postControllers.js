@@ -1,21 +1,22 @@
-import { response } from "express";
-import { createPostService, deletePostService, getAllPostsService, updatePostService  } from "../services/postServices.js";
+import { createPostService, deletePostService, getAllPostsService, updatePostService  } from "../services/postService.js";
 
 
 export async function createPost(req, res) {
     try {
-      console.log("Uploaded File:", req.file); // Debugging
-  
+      const userDetails = req.user;
+      
+  // call the service layer
       if (!req.file || !req.file.location) {
         return res.status(400).json({
           success: false,
-          message: "No file uploaded",
+          message: "Image is required",
         });
       }
   
       const post = await createPostService({
         caption: req.body.caption,
         image: req.file.path, // Cloudinary URL
+        user: userDetails._id
       });
   
       return res.status(201).json({
@@ -28,7 +29,7 @@ export async function createPost(req, res) {
       return res.status(500).json({
         success: false,
         message: "Error creating post",
-        error: error.message,
+        error: error.message
       });
     }
   }
@@ -65,7 +66,7 @@ export async function getAllPosts(req, res){
 export async function deletePost(req, res){
  try {
   const postId = req.params.id;
-  const response = await deletePostService(postId);
+  const response = await deletePostService(postId, req.user._id);
   if(!response){
     return res.status(404).json({
       success: false,
@@ -79,6 +80,17 @@ export async function deletePost(req, res){
     data: response
   }));
  } catch (error) {
+  console.log(error);
+   if(error.status){
+    return res.status(error.status).json({
+        success: false,
+        message: "error.message"
+       });
+  }
+  return res.status(500).json({
+    success: false,
+    message: "Internal server error"
+  })
   
  }
 }

@@ -13,7 +13,7 @@ export const createPost = async (caption ,image, user) => {
 export const findAllPost = async (offset, limit) => {
     try {
         const posts = await Post.find().sort({createdAt: 
-            -1}).skip(offset).limit(limit);
+            -1}).skip(offset).limit(limit).populate('user','username email_id')
         return posts;
     } catch (error) {
         console.log(error);

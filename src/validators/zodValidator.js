@@ -1,8 +1,8 @@
 export const Validate = (Schema) => {
-    return async(res, req, next) => {
+    return async(req,res, next) => {
         try {
             console.log(req.body);
-           schema.parse(req.body);
+           Schema.parse(req.body);
            next(); 
         } catch (error) {
             return res.status(400).json({
